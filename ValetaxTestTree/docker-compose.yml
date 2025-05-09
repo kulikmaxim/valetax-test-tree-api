@@ -1,0 +1,25 @@
+services:
+  valetaxtesttree.api:
+    image: ${DOCKER_REGISTRY-}valetaxtesttreeapi
+    build:
+      context: .
+      dockerfile: ValetaxTestTree.Api/Dockerfile
+
+  valetaxtesttree.db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  valetaxtesttree.adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+ 
+volumes:
+  pgdata:

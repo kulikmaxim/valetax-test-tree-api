@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: ValetaxTestTree.Api/Dockerfile
+    environment:
+      - "ConnectionStrings:DefaultConnection=User ID=postgres;Password=postgres;Host=valetaxtesttree.db;Port=5432;Database=postgres;"
 
   valetaxtesttree.db:
     image: postgres

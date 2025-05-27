@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ValetaxTestTree.Domain.Entities;
 
-namespace ValetaxTestTree.Infrastructure
+namespace ValetaxTestTree.Infrastructure.Storage
 {
     public class AppDbInitializer
     {

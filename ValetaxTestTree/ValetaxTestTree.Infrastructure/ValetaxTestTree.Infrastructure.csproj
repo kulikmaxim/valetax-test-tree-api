@@ -8,9 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.18" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ValetaxTestTree.Application\ValetaxTestTree.Application.csproj" />
     <ProjectReference Include="..\ValetaxTestTree.Domain\ValetaxTestTree.Domain.csproj" />
   </ItemGroup>
 

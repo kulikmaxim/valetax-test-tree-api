@@ -3,7 +3,7 @@ using ValetaxTestTree.Application.Exceptions;
 
 namespace ValetaxTestTree.Api.Factories
 {
-    public class ErrorResultFactory : IErrorResultDetailsFactory
+    public class ErrorResultFactory : IErrorResultFactory
     {
         public ErrorResult Create(Exception exception, long? eventId)
         {

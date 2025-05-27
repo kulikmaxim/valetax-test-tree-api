@@ -6,6 +6,7 @@ services:
       dockerfile: ValetaxTestTree.Api/Dockerfile
     environment:
       - "ConnectionStrings:DefaultConnection=User ID=postgres;Password=postgres;Host=valetaxtesttree.db;Port=5432;Database=postgres;"
+      - "MessageBus:Host=valetaxtesttree.rabbitmq"
 
   valetaxtesttree.db:
     image: postgres
@@ -23,5 +24,15 @@ services:
     ports:
       - 8080:8080
  
+  valetaxtesttree.rabbitmq:
+    image: rabbitmq:4.1-management
+    restart: always
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    ports:
+      - 5672:5672  
+      - 15672:15672  
+ 
 volumes:
   pgdata:
+  rabbitmq:

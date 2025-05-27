@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ValetaxTestTree.Domain.Entities;
 using ValetaxTestTree.Domain.Repositories;
+using ValetaxTestTree.Infrastructure.Storage;
 
 namespace ValetaxTestTree.Infrastructure.Repositories
 {

@@ -2,7 +2,7 @@
 using ValetaxTestTree.Domain.Entities;
 using ValetaxTestTree.Infrastructure.ModelConfigurations;
 
-namespace ValetaxTestTree.Infrastructure
+namespace ValetaxTestTree.Infrastructure.Storage
 {
     public class AppDbContext : DbContext
     {

@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using ValetaxTestTree.Api.BackgroundWorkers;
 using ValetaxTestTree.Api.Factories;
 using ValetaxTestTree.Api.Middleware;
 using ValetaxTestTree.Application;
@@ -16,7 +17,7 @@ namespace ValetaxTestTree.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddHostedService<MessageBusListener>();
             builder.Services.AddControllers()
                 .AddJsonOptions(
                     options =>
@@ -27,11 +28,15 @@ namespace ValetaxTestTree.Api
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddPersistence(connectionString);
+
+            var busHostName = builder.Configuration.GetSection("MessageBus").GetValue<string>("Host");
+            builder.Services.AddMessaging(busHostName);
+
             builder.Services.RegisterRequestHandlers();
 
             builder.Services.AddTransient<ErrorHandlerMiddleware>();
             builder.Services.AddSingleton<ICreateJournalEventCommandFactory, CreateJournalEventCommandFactory>();
-            builder.Services.AddSingleton<IErrorResultDetailsFactory, ErrorResultFactory>();
+            builder.Services.AddSingleton<IErrorResultFactory, ErrorResultFactory>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
@@ -51,6 +56,8 @@ namespace ValetaxTestTree.Api
             await app.Services.InitializeDatabaseAsync();
             if (app.Environment.IsDevelopment())
                 await app.Services.InitializeDatabaseTestDataAsync();
+
+            await app.Services.InitializeMessagingAsync();
 
             app.UseSwagger();
             app.UseSwaggerUI();

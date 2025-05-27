@@ -12,7 +12,7 @@ namespace ValetaxTestTree.Application
         {
             services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<GetOrCreateTreeCommandHandler>());
             services.AddAutoMapper(typeof(TreeResultProfile).Assembly);
-            services.AddValidatorsFromAssemblyContaining<GetOrCreateTreeCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetOrCreateTreeCommandValidator>(ServiceLifetime.Transient);
         }
     }
 }

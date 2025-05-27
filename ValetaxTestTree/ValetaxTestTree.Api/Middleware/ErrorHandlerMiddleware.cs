@@ -1,28 +1,29 @@
-﻿using MediatR;
-using ValetaxTestTree.Api.Factories;
+﻿using ValetaxTestTree.Api.Factories;
 using ValetaxTestTree.Application.Requests;
+using ValetaxTestTree.Infrastructure.Messaging.Publishers;
 
 namespace ValetaxTestTree.Api.Middleware
 {
     public class ErrorHandlerMiddleware : IMiddleware
     {
-        private readonly IMediator mediator;
+        private readonly IJournalEventMessagePublisher journalEventMessagePublisher;
         private readonly ICreateJournalEventCommandFactory createJournalEventCommandFactory;
         private readonly ILogger<ErrorHandlerMiddleware> logger;
-        private readonly IErrorResultDetailsFactory problemDetailsFactory;
+        private readonly IErrorResultFactory errorResultFactory;
 
         public ErrorHandlerMiddleware(
-            IMediator mediator,
+            IJournalEventMessagePublisher journalEventMessagePublisher,
             ICreateJournalEventCommandFactory createJournalEventCommandFactory,
             ILogger<ErrorHandlerMiddleware> logger,
-            IErrorResultDetailsFactory problemDetailsFactory)
+            IErrorResultFactory errorResultFactory)
         {
-            this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this.journalEventMessagePublisher = journalEventMessagePublisher
+                ?? throw new ArgumentNullException(nameof(journalEventMessagePublisher));
             this.createJournalEventCommandFactory = createJournalEventCommandFactory
                 ?? throw new ArgumentNullException(nameof(createJournalEventCommandFactory));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.problemDetailsFactory = problemDetailsFactory
-                ?? throw new ArgumentNullException(nameof(problemDetailsFactory));
+            this.errorResultFactory = errorResultFactory
+                ?? throw new ArgumentNullException(nameof(errorResultFactory));
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -44,18 +45,17 @@ namespace ValetaxTestTree.Api.Middleware
             CreateJournalEventCommand createCommand = null;
             try
             {
-                createCommand = await createJournalEventCommandFactory
-                    .CreateAsync(context, exception);
-                await mediator.Send(createCommand);
+                createCommand = await createJournalEventCommandFactory.CreateAsync(context, exception);
+                await journalEventMessagePublisher.PublishJournalEventAsync(createCommand);
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Error occurred during saving JournalEvent");
+                logger.LogError(e, "Error occurred during publishing JournalEvent");
             }
 
             context.Response.Clear();
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            var errorResult = problemDetailsFactory.Create(
+            var errorResult = errorResultFactory.Create(
                 exception,
                 createCommand?.EventId);
             await context.Response.WriteAsJsonAsync(errorResult);

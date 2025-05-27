@@ -11,3 +11,4 @@ Task requirements can be found [here](https://test.vmarmysh.com/user/description
 - [MediatR](https://github.com/jbogard/MediatR) - for implemeting CQRS
 - [Automapper](https://automapper.org) - for mapping DTOs
 - [FluentValidation](https://docs.fluentvalidation.net/en/latest/) - for request validation
+- [RabbitMQ](https://www.rabbitmq.com/) - for async processing
